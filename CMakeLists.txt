@@ -10,7 +10,7 @@ if (UNIX)
   find_package(X11 REQUIRED) # Required for taking screenshot on linux
 endif (UNIX)
 
-set(CMAKE_CXX_FLAGS "-std=c++11 -g3 -O0")
+set(CMAKE_CXX_FLAGS "-std=c++14 -g3 -O0")
 
 set( NAME_SRC
     src/flashback.cpp
@@ -19,15 +19,7 @@ set( NAME_SRC
     external/xhklib/xhklib.c
 )
 
-
-if (UNIX)
-  INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/external/xhklib)
-endif (UNIX)
-
-if (WIN32)
-  INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR}/include)
-endif (WIN32)
-
+INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/external/easylogging++)
 
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 add_executable( flashback ${NAME_SRC} ${NAME_HEADERS} )

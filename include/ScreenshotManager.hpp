@@ -14,8 +14,6 @@ class ScreenshotManager {
     void Shot(); // Get screenshot using SreenshotProvider
     void Display(const int n, const bool timestampShow = true, const bool labelShow = true);
 
-    void MainLoop();
-
   private:
     bool displayON;
     vector<shared_ptr<Screenshot>> screenshots;
