@@ -15,7 +15,7 @@ void ScreenshotManager::Display(const int n, const bool timestampShow, const boo
   // Create window
   cv::namedWindow("Display", cv::WND_PROP_FULLSCREEN);
   // Make it fullscreen
-  //cv::setWindowProperty("Display", cv::WND_PROP_FULLSCREEN, cv::WINDOW_FULLSCREEN);
+  cv::setWindowProperty("Display", cv::WND_PROP_FULLSCREEN, cv::WINDOW_FULLSCREEN);
 
   // TODO: Display time and label
 
@@ -35,7 +35,7 @@ void ScreenshotManager::Display(const int n, const bool timestampShow, const boo
       cout << "Closing display" << endl;
       displayON = false;
     }
-    if ( key >= '1' && key <= '9' ) { // Display
+    if ( key >= '1' && key <= '9' ) { // Display - TODO: Make it work
       cout << "Display" << endl;
       ImageToDisplay = this->screenshots[(key - '0') % 48]->ImageGet(); // Convert char to int // TODO make it safe
       imshow("Display", *ImageToDisplay);
@@ -45,6 +45,6 @@ void ScreenshotManager::Display(const int n, const bool timestampShow, const boo
   waitKey(1);
   waitKey(1);
   waitKey(1);
-  waitKey(1); // WTF? - To close window? - https://stackoverflow.com/questions/6116564/destroywindow-does-not-close-window-on-mac-using-python-and-opencv
+  waitKey(1); // To close window? - https://stackoverflow.com/questions/6116564/destroywindow-does-not-close-window-on-mac-using-python-and-opencv
   cout << "Display OFF" << endl;
 }

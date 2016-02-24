@@ -26,7 +26,7 @@ const shared_ptr<const Mat> Screenshot::Shot() {
   XCloseDisplay(display);
 
   if (Width && Height) {
-    return make_shared<Mat>(Height, Width, Bpp > 24 ? CV_8UC4 : CV_8UC3, &Pixels[0], true); //Mat(Size(Height, Width), Bpp > 24 ? CV_8UC4 : CV_8UC3, &Pixels[0]);
+    return make_shared<Mat>(Height, Width, Bpp > 24 ? CV_8UC4 : CV_8UC3, &Pixels[0]); //Mat(Size(Height, Width), Bpp > 24 ? CV_8UC4 : CV_8UC3, &Pixels[0]);
   }
 }
 #elif _WIN32 // Defined for both 32-bit and 64-bit environments
