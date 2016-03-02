@@ -13,8 +13,12 @@
 
 #include <vector>
 #include <iostream>
-#include <chrono> // Timestamps
 #include <memory> // shared_ptr
+
+#include <chrono> // Timestamps
+#include <ctime>   // localtime
+#include <sstream> // stringstream
+#include <iomanip> // put_time
 
 // Required for image manipulations
 #include <opencv2/opencv.hpp>
@@ -30,9 +34,24 @@ class Screenshot {
   // TODO: const corectness
   public:
     Screenshot()
-      : imageData(this->Shot()),
+      : originalImage(this->Shot()),
         timestamp(this->TimestampSet())
-    {}
+    {
+      //cout << "Copying Screenshot" << endl;
+      overlayedImage = make_shared<Mat>(*originalImage, cv::Range::all(), cv::Range::all());
+      //cout << "Creating Timestamp string" << endl;
+      auto in_time_t = std::chrono::system_clock::to_time_t(timestamp);
+      std::stringstream ss;
+      ss << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d %X");
+
+      int fontFace = cv::FONT_HERSHEY_PLAIN;
+      double fontScale = 1;
+      int thickness = 1;
+      cv::Point textOrg(5, 20);
+      //cout << "Adding text to image" << endl;
+      // TODO: Display label
+      putText( *overlayedImage, ss.str(), textOrg, fontFace, fontScale, cv::Scalar::all(255), thickness, cv::LINE_AA);
+    }
     const time_point<system_clock> TimestampGet();
     const shared_ptr<const Mat> ImageGet();
     string LabelGet();
@@ -49,8 +68,11 @@ class Screenshot {
     const time_point<system_clock>  TimestampSet(); // const?
 
     // Set during construction
-    const shared_ptr<const Mat> imageData;
+    const shared_ptr<const Mat> originalImage;
     const time_point<system_clock> timestamp; // = std::chrono::system_clock::now()
+
+    // Modified Screenshot
+    shared_ptr<Mat> overlayedImage;
 
     string label;
 };

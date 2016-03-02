@@ -42,7 +42,7 @@ const time_point<system_clock> Screenshot::TimestampGet(){
 }
 
 const shared_ptr<const Mat> Screenshot::ImageGet() {
-  return imageData;
+  return overlayedImage;
 }
 
 string Screenshot::LabelGet() {

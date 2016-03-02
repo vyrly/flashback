@@ -17,8 +17,6 @@ void ScreenshotManager::Display(const int n, const bool timestampShow, const boo
   // Make it fullscreen
   cv::setWindowProperty("Display", cv::WND_PROP_FULLSCREEN, cv::WINDOW_FULLSCREEN);
 
-  // TODO: Display time and label
-
   displayON = true;
 
   shared_ptr<const Mat> ImageToDisplay = this->screenshots[n]->ImageGet();
@@ -28,6 +26,7 @@ void ScreenshotManager::Display(const int n, const bool timestampShow, const boo
   cout << "Display ON" << endl;
 
   int key = -1;
+  int shotNumber = 0;
   while (displayON) {
     key = waitKey(0);
     cout << key << endl; // DBG
@@ -35,9 +34,12 @@ void ScreenshotManager::Display(const int n, const bool timestampShow, const boo
       cout << "Closing display" << endl;
       displayON = false;
     }
-    if ( key >= '1' && key <= '9' ) { // Display - TODO: Make it work
-      cout << "Display" << endl;
-      ImageToDisplay = this->screenshots[(key - '0') % 48]->ImageGet(); // Convert char to int // TODO make it safe
+    if ( key >= 1048625 && key <= 1048633 ) { // Display n screenshot
+      shotNumber = key - 1048625;
+      if (this->screenshots.size() < shotNumber)
+        shotNumber = this->screenshots.size() - 1;
+      cout << shotNumber << endl; // DBG
+      ImageToDisplay = this->screenshots[shotNumber]->ImageGet(); // Segfault when displaying last screenshot
       imshow("Display", *ImageToDisplay);
     }
   }
