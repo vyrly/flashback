@@ -16,7 +16,7 @@ class ScreenshotManager {
 
   private:
     bool displayON;
-    vector<shared_ptr<Screenshot>> screenshots;
+    vector<Screenshot> screenshots;
     ImageProcessor imProc;
 };
 

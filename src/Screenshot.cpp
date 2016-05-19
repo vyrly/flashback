@@ -1,7 +1,7 @@
 #include <Screenshot.hpp>
 
 #ifdef __gnu_linux__
-const shared_ptr<const Mat> Screenshot::Shot() {
+void Screenshot::Shot() {
   // TODO: Make it cleaner and safe
   int Width = 0;
   int Height = 0;
@@ -26,7 +26,7 @@ const shared_ptr<const Mat> Screenshot::Shot() {
   XCloseDisplay(display);
 
   if (Width && Height) {
-    return make_shared<Mat>(Height, Width, Bpp > 24 ? CV_8UC4 : CV_8UC3, &Pixels[0]); //Mat(Size(Height, Width), Bpp > 24 ? CV_8UC4 : CV_8UC3, &Pixels[0]);
+    originalImage->create(Height, Width, &Pixels[0]);
   }
 }
 #elif _WIN32 // Defined for both 32-bit and 64-bit environments
@@ -41,8 +41,8 @@ const time_point<system_clock> Screenshot::TimestampGet(){
   return timestamp;
 }
 
-const shared_ptr<const Mat> Screenshot::ImageGet() {
-  return overlayedImage;
+shared_ptr<sf::Image> Screenshot::ImageGet() {
+  return originalImage;
 }
 
 string Screenshot::LabelGet() {

@@ -1,10 +1,26 @@
 cmake_minimum_required(VERSION 2.8)
+
+# Enable debug symbols by default
+# must be done before project() statement
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the type of build (Debug or Release)" FORCE)
+endif()
+# (you can also set it on the command line: -D CMAKE_BUILD_TYPE=Release)
+
 PROJECT (flashback)
 
 # Options. Turn on with 'cmake -Dmyvarname=ON'.
 option(test "Build all tests." OFF) # Makes boolean 'test' available.
 
-find_package(OpenCV REQUIRED) # Required for image manipulations
+find_package(OpenCV REQUIRED) # Required for image processing
+find_package(SFML REQUIRED) # Required for image manipulations and displaying
+
+# Detect and add SFML
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
+#Find any version 2.X of SFML
+#See the FindSFML.cmake file for additional details and instructions
+find_package(SFML 2 REQUIRED graphics )
+
 
 if (UNIX)
   find_package(X11 REQUIRED) # Required for taking screenshot on linux
@@ -16,15 +32,20 @@ set( NAME_SRC
     src/flashback.cpp
     src/Screenshot.cpp
     src/ScreenshotManager.cpp
-    external/xhklib/xhklib.c
+    external/xhklib/xhklib.c # ???needed???
 )
 
-INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR}/external/easylogging++)
+
+if(SFML_FOUND)
+  # !!!Use this!!!
+endif()
+
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/include ${SFML_INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/external/easylogging++) #???easylogging???
 
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 add_executable( flashback ${NAME_SRC} ${NAME_HEADERS} )
 
-target_link_libraries( flashback ${OpenCV_LIBS} ${X11_LIBRARIES})
+target_link_libraries( flashback ${SFML_LIBRARIES} ${OpenCV_LIBS} ${X11_LIBRARIES})
 
 # Testing ######################################################################
 # Based on GTest framework
