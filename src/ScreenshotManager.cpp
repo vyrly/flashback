@@ -12,16 +12,46 @@ void ScreenshotManager::Shot() {
 }
 
 void ScreenshotManager::Display(const int n, const bool timestampShow, const bool labelShow) {
-  // Create window
-  cv::namedWindow("Display", cv::WND_PROP_FULLSCREEN);
-  // Make it fullscreen
-  cv::setWindowProperty("Display", cv::WND_PROP_FULLSCREEN, cv::WINDOW_FULLSCREEN);
+  // create the window
+  sf::RenderWindow window(sf::VideoMode::getDesktopMode(), "Flashback");
 
   displayON = true;
 
-  shared_ptr<const Mat> ImageToDisplay = this->screenshots[n]->ImageGet();
+  shared_ptr<sf::Image> ImageToDisplay = this->screenshots[n]->ImageGet();
 
-  // cvStartWindowThread();
+  // Load a texture from a file
+  sf::Texture texture;
+  texture.loadFromImage(*ImageToDisplay);
+
+  // Assign it to a sprite
+  sf::Sprite sprite;
+  sprite.setTexture(texture);
+
+  // run the program as long as the window is open
+  while (window.isOpen())
+  {
+      // check all the window's events that were triggered since the last iteration of the loop
+      sf::Event event;
+      while (window.pollEvent(event))
+      {
+          // "close requested" event: we close the window
+          if (event.type == sf::Event::Closed)
+              window.close();
+      }
+
+      // clear the window with black color
+      window.clear(sf::Color::Black);
+
+      // Draw everything here...
+      // Draw the textured sprite
+      window.draw(sprite);
+
+      // end the current frame
+      window.display();
+  }
+
+
+/*  // cvStartWindowThread();
   imshow("Display", *ImageToDisplay);
   cout << "Display ON" << endl;
 
@@ -48,5 +78,6 @@ void ScreenshotManager::Display(const int n, const bool timestampShow, const boo
   waitKey(1);
   waitKey(1);
   waitKey(1); // To close window? - https://stackoverflow.com/questions/6116564/destroywindow-does-not-close-window-on-mac-using-python-and-opencv
+*/
   cout << "Display OFF" << endl;
 }
