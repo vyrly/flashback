@@ -15,7 +15,7 @@
 //INITIALIZE_EASYLOGGINGPP
 
 int main(int argc, char* argv[]) {
-  ScreenshotManager ScrMan = ScreenshotManager();
+  ScreenshotManager ScrMan;
 
   // TODO: separate hotkey code
   // Global Hotkey based on https://stackoverflow.com/questions/4037230/global-hotkey-with-x11-xlib
@@ -47,8 +47,9 @@ int main(int argc, char* argv[]) {
         if (XLookupKeysym(&ev.xkey, 0) == XK_Pause ) {
           if ((ev.xkey.state & (ShiftMask | ControlMask | Mod1Mask | Mod4Mask)) == None) {
             cout << "Open screenshot manager" << endl;
-            ScrMan.Display(0); // ---> Open screenshot manager
+            ScrMan.Main(0); // ---> Open screenshot manager
             // TODO: Don't diplay manager if it's already open
+            // TODO: Display last opened screenshot
           }
         }
         else if (XLookupKeysym(&ev.xkey, 0) == XK_Print ) {

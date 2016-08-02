@@ -24,7 +24,17 @@ void Screenshot::Shot() {
 
   memcpy(&Pixels[0], img->data, Pixels.size());
 
-  //TODO Conversion to RGBA 32 bit needed
+  // Prepare color cache
+  Colormap cmap = attributes.colormap;
+  #define CSIZE 16384
+  unsigned long pixels[CSIZE];
+  XColor colors[CSIZE];
+  bool empty[CSIZE];
+
+  int cind;
+  for(cind=0; cind<CSIZE; cind++){
+      empty[cind] = true;
+  }
 
   // Extract values for all pixels in image
   for(int y=0; y<Height; y++){
@@ -34,9 +44,24 @@ void Screenshot::Shot() {
 
       int centry;
 
-      color.pixel = XGetPixel(img, x, y);
+      c = XGetPixel(img, x, y);
 
-      // TODO: LUT for XGetPixel???
+      // Get from cache
+      centry = c % CSIZE;
+
+      if(empty[centry] == false && pixels[centry] == c) {
+        color = colors[centry];
+        //cout << "Color" << c << endl;
+      }
+      else { // Get using XQueryColor
+        empty[centry] = false;
+
+        color.pixel = c;
+        XQueryColor(display, cmap, &color);
+
+        pixels[centry] = c;
+        colors[centry] = color;
+      }
 
       XQueryColor(display, DefaultColormap(display, DefaultScreen (display)), &color);
 
