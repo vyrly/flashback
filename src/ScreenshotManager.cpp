@@ -1,23 +1,21 @@
 #include <ScreenshotManager.hpp>
 
 void ScreenshotManager::Shot() {
-  shared_ptr<Screenshot> scr = std::make_shared<Screenshot>(); // <--- Screenshot
-  currentSet->push_back(scr);
-  cout << "Number of screenshots in current set: " << currentSet->size() << endl;
-  cout << "Number of sets in current session: " << currentSession->size() << endl;
-  cout << "Number of sessions: " << sessions.size() << endl;
+  // Take screenshot and it in set
+  (*itCurrentSet)->push_front(std::make_shared<Screenshot>());// <--- Screenshot
+  // Set iterator to latest screenshot in set
+  itCurrentScr = (*itCurrentSet)->begin();
+  cout << "Set: " << currentSession.size() << " Screen: " << (*itCurrentSet)->size() << endl;
 }
 
-void ScreenshotManager::Main(const int n) {
-
+void ScreenshotManager::RedrawScr() {
   // Prepare screenshot to be drawn
-  currentScr = currentSet->at(n);
-  screenshotImage = currentScr->ImageGet(); // Get Image pointer
+  screenshotImage = (*itCurrentScr)->ImageGet(); // Get Image pointer
   screenshotTexture.loadFromImage(*screenshotImage); // Load a texture from Image
   screenshotSprite.setTexture(screenshotTexture); // Assign it to a sprite
 
   // Prepare timestamp to be drawn
-  time_point<system_clock> timestamp = currentScr->TimestampGet();
+  time_point<system_clock> timestamp = (*itCurrentScr)->TimestampGet();
   // Convert timestamp to string
   auto in_time_t = std::chrono::system_clock::to_time_t(timestamp);
   std::stringstream ss;
@@ -27,6 +25,11 @@ void ScreenshotManager::Main(const int n) {
   timestampText.setCharacterSize(22); // // set the character size in pixels
   timestampText.setColor(sf::Color::Red); // set the color
   timestampText.setStyle(sf::Text::Bold); // set the text style
+}
+
+void ScreenshotManager::Main() {
+
+  RedrawScr();
 
   sf::RenderWindow window(sf::VideoMode::getDesktopMode(), "Flashback", sf::Style::Fullscreen);
 
@@ -52,10 +55,18 @@ void ScreenshotManager::Main(const int n) {
           // "Down": change displayed screenshot
           if (event.key.code == sf::Keyboard::Down) {
             cout << "Key: Down" << endl;
+            if (itCurrentScr != --(*itCurrentSet)->end()) {
+              itCurrentScr = std::next(itCurrentScr);
+              RedrawScr();
+            }
           }
           // "Up": change displayed screenshot
           if (event.key.code == sf::Keyboard::Up) {
             cout << "Key: Up" << endl;
+            if (itCurrentScr != (*itCurrentSet)->begin()) {
+              itCurrentScr = std::prev(itCurrentScr);
+              RedrawScr();
+            }
           }
           // "Right": next set
           if (event.key.code == sf::Keyboard::Up) {

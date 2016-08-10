@@ -4,49 +4,63 @@
 #include <ImageProcessor.hpp>
 #include <Screenshot.hpp>
 
-using namespace std;
-
 //------------------------------------------------------------------------------
 
 class ScreenshotsSet {
   public:
+
+    typedef list<shared_ptr<Screenshot>> ScrSet;
+
+    typedef ScrSet::iterator iterator;
+    typedef ScrSet::const_iterator const_iterator ;
+
+    iterator begin() { return set.begin(); }
+    iterator end() { return set.end(); }
+
+    const_iterator cbegin() const { return set.begin(); }
+    const_iterator cend() const { return set.end(); }
+
+    size_t size() const { return set.size(); }
+
     ScreenshotsSet() {}
     ScreenshotsSet(shared_ptr<Screenshot> scr) {
       set.push_back(scr);
     }
-    void push_back(shared_ptr<Screenshot> scr) {
-      set.push_back(scr);
-    }
-    shared_ptr<Screenshot> at(int n) {
-      return set.at(n);
-    }
-    int size() {
-      return set.size();
+    void push_front(shared_ptr<Screenshot> scr) {
+      set.push_front(scr);
     }
   private:
-    vector<shared_ptr<Screenshot>> set;
+    ScrSet set;
 };
 
 class ScreenshotsSession {
   public:
+
+    typedef list<shared_ptr<ScreenshotsSet>> ScrSession;
+
+    typedef ScrSession::iterator iterator;
+    typedef ScrSession::const_iterator const_iterator ;
+
+    iterator begin() { return session.begin(); }
+    iterator end() { return session.end(); }
+
+    const_iterator cbegin() const { return session.begin(); }
+    const_iterator cend() const { return session.end(); }
+
+    size_t size() const { return session.size(); }
+
     ScreenshotsSession() {}
     ScreenshotsSession(shared_ptr<ScreenshotsSet> set) {
       session.push_back(set);
     }
-    void push_back(shared_ptr<ScreenshotsSet> set) {
-      session.push_back(set);
-    }
-    shared_ptr<ScreenshotsSet> at(int n) {
-      return session.at(n);
-    }
-    int size() {
-      return session.size();
+    void push_front(shared_ptr<ScreenshotsSet> set) {
+      session.push_front(set);
     }
     // TODO:
     void save() {}
     void load() {}
   private:
-    vector<shared_ptr<ScreenshotsSet>> session;
+    ScrSession session;
 };
 
 class ScreenshotManager {
@@ -56,24 +70,26 @@ class ScreenshotManager {
       displayON = false;
       font.loadFromFile("../fonts/LiberationMono-Bold.ttf");
 
-      currentSet = std::make_shared<ScreenshotsSet>();  // <--- Set
-      currentSession = std::make_shared<ScreenshotsSession>(); // <--- Session
-      currentSession->push_back(currentSet); // Assigning set to session
-      sessions.push_back(currentSession); // Assigning session to collection of sessions
+      // Initialize session structure
+      cout << "Initialize session structure" << endl;
+      currentSession = ScreenshotsSession(); // <--- New session
+      currentSession.push_front(std::make_shared<ScreenshotsSet>()); // Assigning set to session
+      itCurrentSet = currentSession.begin();
     }
 
     void Shot(); // Get screenshot using SreenshotProvider
-    void Main(const int n); // Main loop of screenshot Manager
+    void Main(); // Main loop of screenshot Manager
+
+    void RedrawScr();
 
   private:
+    ScreenshotsSet::iterator itCurrentScr;
+    ScreenshotsSession::iterator itCurrentSet;
+    ScreenshotsSession currentSession; // Collection of sets
+
     int n;
     bool displayON;
     sf::Font font;
-
-    shared_ptr<Screenshot> currentScr;
-    shared_ptr<ScreenshotsSet> currentSet; // Collection of screenshots
-    shared_ptr<ScreenshotsSession> currentSession; // Collection of sets
-    vector<shared_ptr<ScreenshotsSession>> sessions; // Collection of sessions
 
     ImageProcessor imProc;
 

@@ -4,6 +4,7 @@
 // Required for image manipulations
 #include <SFML/Graphics.hpp> // Image
 #include <vector>
+#include <list>
 #include <iostream>
 #include <memory> // shared_ptr, make_shared
 

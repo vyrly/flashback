@@ -47,7 +47,7 @@ int main(int argc, char* argv[]) {
         if (XLookupKeysym(&ev.xkey, 0) == XK_Pause ) {
           if ((ev.xkey.state & (ShiftMask | ControlMask | Mod1Mask | Mod4Mask)) == None) {
             cout << "Open screenshot manager" << endl;
-            ScrMan.Main(0); // ---> Open screenshot manager
+            ScrMan.Main(); // ---> Open screenshot manager
             // TODO: Don't diplay manager if it's already open
             // TODO: Display last opened screenshot
           }
